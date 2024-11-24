@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1F8WAJ-CjYRVFnY0zyuLJL6zcVtb25hnh
 """
 
-!pip install streamlit
+
 from fastai.vision.all import *
 from PIL import Image
 import streamlit as st
