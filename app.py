@@ -15,7 +15,7 @@ import streamlit as st
 # Load the model
 @st.cache_resource
 def load_model():
-    return load_learner('/content/drive/MyDrive/model.pkl')
+    return load_learner('https://github.com/jk-vishwanath/DAV-6150/blob/main/model.pkl')
 
 model = load_model()
 
