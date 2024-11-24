@@ -29,8 +29,8 @@ def load_model():
 model = load_model()
 
 # Streamlit UI
-st.title("Eagle or Crow Classifier")
-st.write("Upload an image to classify as an Eagle or a Crow.")
+st.title("Elephant or Ant Classifier")
+st.write("Upload an image to classify as an Elephant or a Ant.")
 
 # File uploader
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
