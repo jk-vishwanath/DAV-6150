@@ -41,10 +41,14 @@ def main():
     if features is None:
         return  # Exit if preprocessing fails
 
-    # Load the model
-    model_path = "https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5"  # Update with the correct model path
-    try:
-        model = load_model(model_path)
+    # Example usage:
+model_url = 'https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5'
+save_path = 'rnn_model_Final.h5'
+
+# Load the model
+  
+try:
+        model = load_model_from_url(model_url, save_path)  
     except OSError:
         st.error("Failed to load the model. Please check the file path and format.")
         return
