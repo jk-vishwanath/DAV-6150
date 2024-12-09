@@ -11,6 +11,18 @@ def load_data():
     except FileNotFoundError:
         st.error("Dataset file not found!")
         return None
+def load_model_from_url(model_url, save_path):
+    if not os.path.exists(save_path):
+        download_model(model_url, save_path)
+    
+    # Load the model from the local path
+    try:
+        model = load_model(save_path)
+        print("Model loaded successfully.")
+        return model
+    except Exception as e:
+        print(f"Error loading the model: {e}")
+        return None
 
 def preprocess_input(track_track_name, data):
     # Validate and extract track features
