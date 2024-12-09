@@ -67,7 +67,7 @@ def main():
     max_sequence_length = 10
 
     # Download and load the model
-    model_url = "https://raw.githubusercontent.com/<your-username>/<your-repo>/main/rnn_model_Final.h5"
+    model_url = "https://github.com/jk-vishwanath/DAV-6150/blob/main/rnn_model_Final.h5"
     with tempfile.NamedTemporaryFile(delete=False, suffix=".h5") as temp_file:
         model_path = temp_file.name
         response = requests.get(model_url)
