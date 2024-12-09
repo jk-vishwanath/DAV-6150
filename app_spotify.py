@@ -19,7 +19,7 @@ def preprocess_input(track_track_name, data):
         return None
 
     # Extract features for the given track URI
-    features = data.loc[data['track_track_name'] == track_track_name, ['feature1', 'feature2', ...]].values
+    features = data.loc[data['track_track_name'] == track_track_name, ['track_track_name', 'track_pos', ...]].values
     return features
 
 def main():
