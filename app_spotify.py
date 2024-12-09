@@ -47,7 +47,7 @@ save_path = 'rnn_model_Final.h5'
 
 # Load the model
   
-try:
+    try:
         model = load_model_from_url(model_url, save_path)  
     except OSError:
         st.error("Failed to load the model. Please check the file path and format.")
