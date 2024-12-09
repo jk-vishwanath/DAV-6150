@@ -12,14 +12,14 @@ def load_data():
         st.error("Dataset file not found!")
         return None
 
-def preprocess_input(track_uri, data):
+def preprocess_input(track_track_name, data):
     # Validate and extract track features
-    if track_uri not in data['track_uri'].values:
+    if track_track_name not in data['track_track_name'].values:
         st.error("Unknown track URI. Please provide a valid Spotify track URI.")
         return None
 
     # Extract features for the given track URI
-    features = data.loc[data['track_uri'] == track_uri, ['feature1', 'feature2', ...]].values
+    features = data.loc[data['track_track_name'] == track_track_name, ['feature1', 'feature2', ...]].values
     return features
 
 def main():
@@ -42,9 +42,9 @@ def main():
         return  # Exit if preprocessing fails
 
     # Load the model
-    model_path = "model.h5"  # Update with the correct model path
+    model_path = "https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5"  # Update with the correct model path
     try:
-        model = load_model('https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5')
+        model = load_model(model_path)
     except OSError:
         st.error("Failed to load the model. Please check the file path and format.")
         return
