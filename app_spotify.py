@@ -42,8 +42,8 @@ def main():
         return  # Exit if preprocessing fails
 
     # Example usage:
-model_url = 'https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5'
-save_path = 'rnn_model_Final.h5'
+    model_url = 'https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5'
+    save_path = 'rnn_model_Final.h5'
 
 # Load the model
   
