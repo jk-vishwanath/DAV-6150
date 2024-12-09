@@ -1,104 +1,61 @@
 import streamlit as st
-import requests
-import tempfile
-import os
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.models import load_model
+import pandas as pd
+import numpy as np
 
-# Helper functions
-def track_names_to_ids(track_names, track_to_id):
-    """
-    Converts a sequence of track names to track IDs using the `track_to_id` mapping.
-    """
-    track_ids = [track_to_id.get(name, -1) for name in track_names]
-    if -1 in track_ids:
-        raise ValueError("One or more track names are not present in the `track_to_id` mapping.")
-    return track_ids
+def load_data():
+    # Load your dataset
+    try:
+        data = pd.read_csv("https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/df_merge.csv")  # Update with the correct path
+        return data
+    except FileNotFoundError:
+        st.error("Dataset file not found!")
+        return None
 
-def prepare_input_sequence(track_ids, max_sequence_length):
-    """
-    Pads the sequence of track IDs to match the `max_sequence_length` expected by the model.
-    """
-    return pad_sequences([track_ids], maxlen=max_sequence_length, padding='pre')
+def preprocess_input(track_uri, data):
+    # Validate and extract track features
+    if track_uri not in data['track_uri'].values:
+        st.error("Unknown track URI. Please provide a valid Spotify track URI.")
+        return None
 
-def get_track_uri_from_id(track_id, id_to_track):
-    """
-    Maps the predicted track ID to its track URI using the `id_to_track` mapping.
-    """
-    return id_to_track.get(track_id, "Unknown Track URI")
+    # Extract features for the given track URI
+    features = data.loc[data['track_uri'] == track_uri, ['feature1', 'feature2', ...]].values
+    return features
 
-def predict_next_track(model, track_names, track_to_id, id_to_track, max_sequence_length):
-    """
-    Predicts the next track for a given sequence of track names.
-    """
-    # Convert track names to IDs
-    track_ids = track_names_to_ids(track_names, track_to_id)
-    
-    # Prepare the input sequence
-    input_sequence = prepare_input_sequence(track_ids, max_sequence_length)
-    
-    # Predict the next track
-    predicted_probs = model.predict(input_sequence)
-    predicted_track_id = predicted_probs.argmax(axis=1)[0]
-    
-    # Map the predicted track ID back to the track URI
-    predicted_track_uri = get_track_uri_from_id(predicted_track_id, id_to_track)
-    
-    return predicted_track_uri
-
-# Streamlit app
 def main():
-    st.title("Track Recommendation System")
-    st.write("Enter a sequence of tracks to predict the next best track.")
+    st.title("Spotify Track Predictor")
 
-    # Input: Sequence of tracks
-    input_tracks = st.text_area(
-        "Enter track names (comma-separated):",
-        value="Hypnotize - 2014 Remastered Version, Big Poppa"
-    )
-    
-    # Load mappings
-    track_to_id = {
-        "Hypnotize - 2014 Remastered Version": 0,
-        "Big Poppa": 1,
-        # Add more tracks here...
-    }
-    id_to_track = {v: k for k, v in track_to_id.items()}
-    max_sequence_length = 10
+    # Input: Track URI
+    track_uri = st.text_input("Enter a Spotify track URI:")
+    if not track_uri:
+        st.warning("Please enter a track URI to continue.")
+        return
 
-    # Download and load the model
-    model_url = "https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".h5") as temp_file:
-        model_path = temp_file.name
-        response = requests.get(model_url)
-        if response.status_code == 200:
-            temp_file.write(response.content)
-            st.success("Model downloaded successfully.")
-        else:
-            st.error("Failed to download model. Please check the URL.")
-            return
+    # Load dataset
+    dataset = load_data()
+    if dataset is None:
+        return  # Exit if dataset loading fails
 
-    model = load_model(model_path)
+    # Preprocess input
+    features = preprocess_input(track_uri, dataset)
+    if features is None:
+        return  # Exit if preprocessing fails
+
+    # Load the model
+    model_path = "model.h5"  # Update with the correct model path
+    try:
+        model = load_model('https://github.com/jk-vishwanath/DAV-6150/raw/refs/heads/main/rnn_model_Final.h5')
+    except OSError:
+        st.error("Failed to load the model. Please check the file path and format.")
+        return
 
     # Predict the next track
     if st.button("Predict Next Track"):
-        try:
-            # Convert input tracks to list
-            track_names = [track.strip() for track in input_tracks.split(",")]
+        prediction = model.predict(features)
+        predicted_track_index = np.argmax(prediction)  # Example if using classification
+        predicted_track = dataset.iloc[predicted_track_index]['track_name']
 
-            # Predict next track
-            predicted_track_uri = predict_next_track(
-                model=model,
-                track_names=track_names,
-                track_to_id=track_to_id,
-                id_to_track=id_to_track,
-                max_sequence_length=max_sequence_length
-            )
-            st.success(f"Predicted next track: {predicted_track_uri}")
-        except ValueError as e:
-            st.error(f"Error: {e}")
-        except Exception as e:
-            st.error(f"Unexpected error: {e}")
+        st.success(f"Predicted next track: {predicted_track}")
 
 if __name__ == "__main__":
     main()
