@@ -3,4 +3,7 @@ streamlit
 pillow
 tensorflow==2.18.0  # Replace with the version used for training the model
 requests==2.31.0  # For downloading the model from GitHub
+pandas
+numpy
+requests
 
